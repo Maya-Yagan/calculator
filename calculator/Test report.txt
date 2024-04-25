@@ -1,0 +1,1643 @@
+OOP2 homework 2
+Maya Yagan 200101124
+12.05.2023
+Please open this file in full screen for better readability
+********************************************************** Interface Calculatoins **************************************************************************
+Explanation:
+This interface is for calculating the methods value and derivative for the five classes: Variable, Number, BinaryOP, Polynomial and Log. All the mentioned classes implement the interface Calculations
+The methods in this interface are: 
+1- getExpression(): This method will retrieve an Object which represents the function we want to work on. This method was needed in this interface so that we can determine exactly on what function we are working on.
+2- value(double) or value(): This method calculates the value of the given function at the given point
+3- valueHelper(Object, double): This method helps the method value in doing its calculations
+4- derivative(): This method calculates the derivative of the given function
+---Side note for method derivative: This method only computes the derivative of a function without simplifying the result. Since no instructions were provided in the assignment on whether we have to simplfy the result or not, I chose the easier for me :) which is calculating without simplifying 
+5- derivativeHelper(Object): This method helps teh method derivative in doing its calculations
+We will test the methods value and derivative in each class. The helper methods will not be tested because when we test value and derivative, we will already have tested the helper methods as well. Also the method getExpression, when tested in each class, will return whatever the method toString returns, so we will not test this method for each class. We will test it only once since it does the same thing for all classes.
+
+> BinaryOP fx = new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Number(5))
+		//we created an instance of BinaryOP to test getExpression
+> fx.toString()
+		//showing that getExpression will return an Object that has the same output of toString
+"x + 5.0"
+		//returned as expected ☑
+> fx.getExpression()
+		//it should return whatever toString returned, not as a String, but as an Object
+x + 5.0
+		//returned as expected ☑
+
+***************************************************************** Class Variable ***************************************************************************
+Explanation:
+This class represents a Variable that can be used in any function. Our variable can only be x.
+
+> Variable x1 = new Variable()
+		//an instance of Variable has been created, which indicates that the constructor is working properly 
+> x.toString()
+		//testing method toString. It should return "x"
+"x"
+		//returned as expected ☑
+> Variable x2 = new Variable()
+		//we created another Variable to test the method equals
+> x1.equals(x2)
+		//testing method equals. It should return true if we are comparing any two Variables
+true
+		//returned as expected ☑
+> x1.equals(5)
+		//comparing to anything that is not a Variable will return false
+false
+		//returned as expected ☑ 
+> x2.value(10)
+		//testing method value. This method will return the value of x at the given point
+10.0
+		//returned as expected ☑ 
+> x2.value()
+		//if we give no input for a variable and we ask for a value, an Exception will be thrown
+java.lang.UnsupportedOperationException: Input was expected but none was provided
+	at Calculations.value(Calculations.java:69)
+		//returned as expected ☑
+> x2.value(3,45,6)
+		//testing value for more than one input. It should throw an Exception
+java.lang.IllegalArgumentException: Cannot have more than one input. 
+	at Calculations.value(Calculations.java:79)
+		//returned as expected ☑ 
+> x2.derivative()
+		//testing method derivative. It should return 1 because the derivative of x is 1
+1.0
+		//returned as expected ☑ 
+
+************************************************************************************************************************************************************
+***************************************************************** Class Number *****************************************************************************
+Explanation:
+This class represents a double number
+
+> Number n = new Number(5)
+		//an instance of Number has been created, which indicates that the constructor is working properly
+> n.toString()
+		//testing method toString. It should return the number as a String
+"5.0"
+		//returned as expected ☑
+> n.equals(new Number(5))
+		//testing method equals. It should return true if the two numbers are equal
+true
+		////returned as expected ☑
+> n.equals(new Number(10))
+		//testing for the false case
+false
+		//returned as expected ☑
+> n.value(76)
+		//testing method value. It should return the value of the number whatever input is given
+5.0
+		//returned as expected ☑
+> n.value()
+		//testing value for no input. It should return the value of the number because the input doesn't matter 
+5.0
+		//returned as expected ☑
+> n.value(1,2,3)
+		//testing value for more than one input. It should throw an Exception
+java.lang.IllegalArgumentException: Cannot have more than one input
+	at Calculations.value(Calculations.java:79)
+		//returned as expected ☑
+> n.derivative()
+		//testing method derivative. It should return zero since the derivative of any constant is zero
+0.0
+		//returned as expected ☑
+
+************************************************************************************************************************************************************
+************************************************************* Class Polynomial *****************************************************************************
+Explanation:
+This class represents a function raised to the power, for example (x+3)^5
+
+> Polynomial p1 = new Polynomial(new Variable(), 4)
+		//an instance of Polynomial has been created, which indicates that the constructor is working
+> p1.getOperand()
+		//testing mehtod getOperand. It should return the operand of the functions (the operand can be any of our 5 classes)
+x
+		//returned as expected ☑
+> p1.getPower()
+		//testing method getPower. It should return the power of the function
+4.0
+		//returned as expected ☑
+> p1.toString()
+		//testing method toString. It should return the function as a String
+"x^4.0"
+		//returned as expected ☑
+> Polynomial p2 = new Polynomial(new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Number(2)), 9)
+		//creating a new instance for testing the case where the operand is a BinaryOP (so that it should be put inside parentheses)
+> p2.toString()
+		//testing for the case of operand is a BianryOP
+"(x + 2.0)^9.0"
+		//returned as expected ☑
+> p1.equals(p2)
+		//testing method equals. It should return false here as the operands and powers are different of each Polynomial
+false
+		//returned as expected ☑
+> p1.equals(new Polynomial(new Variable(), 4))
+		//testing for the true case
+true
+		//returned as expected ☑
+
+Now for testing the method value with an input we have 5 cases:
+1)operand = Number
+2)operand = Variable
+3)operand = BinaryOP
+4)operand = Polynomial
+5)operand = Log
+
+--case 1:
+> Polynomial fx1 = new Polynomial(new Number(2), 3)
+		// fx1 = 2^3
+> fx1.value(56)
+		// 2^3 = 8
+8.0		//returned as expected ☑
+
+--case 2: 
+> Polynomial fx2 = new Polynomial(new Variable(), 2)
+		// fx2 = x^2
+> fx2.value(5)
+		// 5^2 = 25
+25.0		//returned as expected ☑
+
+--case 3:
+> Polynomial fx3 = new Polynomial(new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Number(3)), 3)
+		// fx3 = (x + 3)^3
+> fx3.value(2)
+		// (2 + 3)^3 = 5^3 = 125
+125.0		//returned as expected ☑
+
+--case 4: 
+> Polynomial fx4 = new Polynomial(new Polynomial(new Variable(), 2), 3)
+		// fx4 = (x^2)^3
+> fx4.value(2)
+		// (2^2)^3 = 4^3 = 64
+64.0		//returned as expected ☑
+
+--case 5:
+> Polynomial fx5 = new Polynomial(new Log(new Variable()), 2)
+		// fx5 = (lnx)^2
+> fx5.value(Math.E)
+		// (lne)^2 = 1^2 = 1
+1.0		//returned as expected ☑
+
+Since we tested the method value in class Variable for no input, and an exception was thrown there is no need to retest it here
+but let's test it once anyway:
+> fx5.value()
+		//there is a Variable inside fx5, so there should be an input. That's whay an exception is thrown
+java.lang.UnsupportedOperationException: Input was expected but none was provided
+	at Calculations.valueHelper(Calculations.java:103)
+	at Calculations.valueHelper(Calculations.java:99)
+	at Calculations.value(Calculations.java:73)
+		//returned as expected ☑
+> fx5.value(1,2,3)
+		//testing value for more than one input. It should throw an Exception
+java.lang.IllegalArgumentException: Cannot have more than one input
+	at Calculations.value(Calculations.java:79)
+		//returned as expected ☑
+> fx1.value()
+		//there is no Variable inside fx1, so we are not expecting an input, so it should be fine to call value with no input here
+8.0		
+		//returned as expected ☑
+
+The method value works recursively, so if it throws an exception when a Variable is found with no input, then it will also do the same thing in any other function (of any of the types Polynomial, BinaryOP or Log) that has a Variable with no input. For the case when no input is given and no Variable is found in the function, then the function is made up of Numbers. Previously we tested value for Number with no input and it returned the Number value without any problems. As a result, because value is a recursive function, demonstrating that it returns the Number value (after doing the needed calculations of course) when no input is provided, proves that it will do the same thing for any other function of any type (Polynomial, BinaryOP or Log). But still because I don't want lose any marks :) I will test it for input, no input and many inputs only once in each class (BinaryOP for example has 100 different combinations, if I wanted to test value with no input and many inputs with each one of them, there will be an extra 200 cases and writing them will be a real pain for me :) )
+
+> fx1.derivative()
+		// fx1 = 2^3 --> f'x1 = 0
+0.0
+		//returned as expected ☑
+> fx2.derivative()
+		// fx2 = x^2 --> f'x2 = 2x
+2.0 * x^1.0
+		//returned as expected ☑
+> fx3.derivative()
+		// fx3 = (x + 3)^3 --> f'x3 = 3[(x+3)^2](1)
+3.0 * ((x + 3.0)^2.0 * (1.0 + 0.0))
+		//returned as expected ☑
+> fx4.derivative()
+		// fx4 = (x^2)^3 --> f'x4 = 3[(x^2)^2](2x) 
+3.0 * (x^2.0^2.0 * (2.0 * x^1.0))
+		//returned as expected ☑
+> fx5.derivative()
+		// fx5 = (lnx)^2 --> f'x5 = 2(lnx)(1/x)
+2.0 * (Exp[x]^1.0 * (1.0 / x))
+		//returned as expected ☑
+
+************************************************************************************************************************************************************
+*************************************************************** Class Log **********************************************************************************
+Explanation:
+This class represents the natural logarithm function
+
+> Log fx1 = new Log(new Polynomial(new BinaryOP(BinaryOP.Op.SUB, new Variable(), new Number(1)), 2))
+		//an instance of Log has been created, which indicates that the construtor is working properly
+> fx1.getOperand()
+		//tetsing method getOperand. It should return the given operand 
+(x - 1.0)^2.0
+		//returned as expected ☑
+> fx1.toString()
+		//testing method toString. It should return the function as a String
+"Exp[(x - 1.0)^2.0]"
+		//returned as expected ☑
+> Log fx2 = new Log(new Number(Math.E))
+		//a new instance of Log was created to test method equasl
+> fx2.equals(new Log(new Number(Math.E)))
+		//it should return true because both fx2 and the input have the same opreand
+true
+		//returned as expected ☑
+> fx2.equals(new Log(new Variable()))
+		//testing the false case, where the the operands are not equal
+false
+		//returned as expected ☑
+
+Now for testing the method value with an input we have 5 cases:
+1)operand = Number
+2)operand = Variable
+3)operand = BinaryOP
+4)operand = Polynomial
+5)operand = Log
+
+--case 1:
+> Log fx1 = new Log(new Number(Math.E))
+		// fx1 = lne
+> fx1.value(34)
+		// lne = 1
+1.0		
+		//returned as expected ☑
+
+--case 2:
+> Log fx2 = new Log(new Variable())
+		// fx2 = lnx
+> fx2.value(Math.E)
+		// lne = 1
+1.0
+		//returned as expected ☑
+
+--case 3:
+> Log fx3 = new Log(new BinaryOP(BinaryOP.Op.SUB, new  BinaryOP(BinaryOP.Op.MULT, new Variable(), new Number(2)), new Number(1)))
+		// fx3 = ln(2x - 1)
+> fx3.value(3)
+		// ln(6-1) = ln(5)
+1.6094379124341003
+		//returned as expected ☑
+
+--case 4:
+> Log fx4 = new Log(new Polynomial(new Variable(), 5))
+		// fx4 = ln(x^5)
+> fx4.value(Math.E)
+		// ln(e^5) = 5lne = 5
+5.0
+		//returned as expected ☑
+
+--case 5:
+> Log fx5 = new Log(new Log(new Variable()))
+		// fx5 = ln(ln(x))
+> fx5.value(Math.E)
+		// ln(ln(e)) = ln(1) = 0
+0.0
+		//returned as expected ☑
+
+> fx5.value()
+		//testing for no input and there is a variable in the function
+java.lang.UnsupportedOperationException: Input was expected but none was provided
+	at Calculations.valueHelper(Calculations.java:103)
+	at Calculations.valueHelper(Calculations.java:104)
+	at Calculations.value(Calculations.java:75)
+		//returned as expected ☑
+> fx5.value(1,2,3)
+		//testing for more than one input. An Exception should be thrown
+java.lang.IllegalArgumentException: Cannot have more than one input
+	at Calculations.value(Calculations.java:79)
+		//returned as expected ☑
+> fx1.value()
+		//testing for no input but there is no variable in the function
+1.0
+		//returned as expected ☑
+> fx1.derivative()
+		// fx1 = ln(e) --> f'x1 = 0
+0.0 / 2.718281828459045 
+		// the answer is basically zero here so: returned as expected ☑
+> fx2.derivative()
+		// fx2 = ln(x) --> f'x2 = 1/x
+1.0 / x
+		//returned as expected ☑
+> fx3.derivative()
+		// fx3 = ln(2x - 1) --> f'x3 = 2/(2x - 1)
+(((1.0 * 2.0) + (x * 0.0)) - 0.0) / ((x * 2.0) - 1.0)
+		//returned as expected ☑
+> fx4.derivative()
+		// fx4 = ln(x^5) --> f'x4 = (5x^4)/(x^5)
+(5.0 * x^4.0) / x^5.0
+		//returned as expected ☑
+> fx5.derivative()
+		// fx5 = ln(ln(x)) --> f'x5 = (1/x) / (ln(x))
+(1.0 / x) / Exp[x]
+		//returned as expected ☑
+
+************************************************************************************************************************************************************
+*************************************************************** Class BinaryOP *****************************************************************************
+Explanation:
+This class represents a binary operation with two operands and an operator (+, -, *, /)
+
+//testing to see if each operator returns the correct symbol (by doing this we test method getSymbol which is in the enum of this class)
+> BinaryOP.Op.PLUS
++		//returned as expected ☑
+> BinaryOP.Op.SUB
+-		//returned as expected ☑
+> BinaryOP.Op.MULT
+*		//returned as expected ☑
+> BinaryOP.Op.DIV
+/		//returned as expected ☑
+> BinaryOP fx1 = new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Number(8))
+		//an instance of BinaryOP has been created, which indicates that the constructor is working properly
+> fx1.getOperator()
+		//testing method getOperator. It should return the operator + here
++
+		//returned as expected ☑
+> fx1.getLeftOperand()
+		//testing method getLeftOperand. It should return the left operand x
+x
+		//returned as expected ☑
+> fx1.getRightOperand()
+		//testing method getRightOpreand. It should return the right operand 8
+8.0
+		//returned as expected ☑
+> fx1.toString()
+		//testing mehtod toString. It should return the function as a String
+"x + 8.0"
+> BinaryOP fx2 = new BinaryOP(BinaryOP.Op.PLUS,
+			 new BinaryOP(BinaryOP.Op.MULT, new Number(5), new Variable()),
+			 new BinaryOP(BinaryOP.Op.SUB, new Number(34), new Variable()))
+		//creating a new instance for testing the first case of toString with parentheses (if both operands are of type BinaryOP they should be put 			inside parentheses)
+> fx2.toString()
+		//checking the case of both operands are of type BinaryOP. 
+"(5.0 * x) + (34.0 - x)"
+		//returned as expected ☑
+> BinaryOP fx3 = new BinaryOP(BinaryOP.Op.PLUS, new Polynomial(new Variable(), 5), new BinaryOP(BinaryOP.Op.SUB, new Number(34), new Variable()))
+		//creating a new instance for testing the second case of toString with parentheses (if left operand is of type BinaryOP it should be put 			inside parentheses)
+> fx3.toString()
+		//checking the case of left operand is of type BinaryOP. 
+"x^5.0 + (34.0 - x)"
+		//returned as expected ☑
+> BinaryOP fx4 = new BinaryOP(BinaryOP.Op.PLUS, new BinaryOP(BinaryOP.Op.DIV, new Number(34), new Variable()), new Log(new Variable()))
+		//creating a new instance for testing the third case of toString with parentheses (if right operand is of type BinaryOP it should be put 			inside parentheses)
+> fx4.toString()
+		//checking the case of left operand is of type BinaryOP. 
+"(34.0 / x) + Exp[x]"
+		//returned as expected ☑
+> BinaryOP fx5 = new BinaryOP(BinaryOP.Op.PLUS, new BinaryOP(BinaryOP.Op.SUB, fx1, fx2), new BinaryOP(BinaryOP.Op.MULT, fx3, fx4))
+		//let's create this instance to see many operands together
+> fx5.toString()
+		//it should return the operands with correct parentheses 
+"((x + 8.0) - ((5.0 * x) + (34.0 - x))) + ((x^5.0 + (34.0 - x)) * ((34.0 / x) + Exp[x]))"
+		//returned as expected ☑
+> fx5.equals(new BinaryOP(BinaryOP.Op.DIV, new Variable(), new Number(5)))
+		//testing method equals. It should return false because the two operands and operator are different
+false
+		//returned as expected ☑
+> fx1.equals(new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Number(8)))
+		//it should return true because both operands and operators are the same
+true
+		//returned as expected ☑
+
+Now for testing the method value with an input we have 100 cases:
+1)Number + Number		6)Number - Number		11)Number * Number		16)Number / Number		
+2)Number + Variable		7)Number - Variable		12)Number * Variable		17)Number / Variable
+3)Number + BinaryOP		8)Number - BinaryOP		13)Number * BinaryOP		18)Number / BinaryOP
+4)Number + Polynomial		9)Number - Polynomial		14)Number * Polynomial		19)Number / Polynomial
+5)Number + Log			10)Number - Log			15)Number * Log			20)Number / Log
+
+21)Variable + Number		26)Variable - Number		31)Variable * Number		36)Variable / Number		
+22)Variable + Variable		27)Variable - Variable		32)Variable * Variable		37)Variable / Variable
+23)Variable + BinaryOP		28)Variable - BinaryOP		33)Variable * BinaryOP		38)Variable / BinaryOP
+24)Variable + Polynomial	29)Variable - Polynomial	34)Variable * Polynomial	39)Variable / Polynomial
+25)Variable + Log		30)Variable - Log		35)Variable * Log		40)Variable / Log
+
+41)BinaryOP + Number		46)BinaryOP - Number		51)BinaryOP * Number		56)BinaryOP / Number		
+42)BinaryOP + Variable		47)BinaryOP - Variable		52)BinaryOP * Variable		57)BinaryOP / Variable
+43)BinaryOP + BinaryOP		48)BinaryOP - BinaryOP		53)BinaryOP * BinaryOP		58)BinaryOP / BinaryOP
+44)BinaryOP + Polynomial	49)BinaryOP - Polynomial	54)BinaryOP * Polynomial	59)BinaryOP / Polynomial
+45)BinaryOP + Log		50)BinaryOP - Log		55)BinaryOP * Log		60)BinaryOP / Log
+
+61)Polynomial + Number		66)Polynomial - Number		71)Polynomial * Number		76)Polynomial / Number		
+62)Polynomial + Variable	67)Polynomial - Variable	72)Polynomial * Variable	77)Polynomial / Variable
+63)Polynomial + BinaryOP	68)Polynomial - BinaryOP	73)Polynomial * BinaryOP	78)Polynomial / BinaryOP
+64)Polynomial + Polynomial	69)Polynomial - Polynomial	74)Polynomial * Polynomial	79)Polynomial / Polynomial
+65)Polynomial + Log		70)Polynomial - Log		75)Polynomial * Log		80)Polynomial / Log
+
+81)Log + Number			86)Log - Number			91)Log * Number			96)Log / Number		
+82)Log + Variable		87)Log - Variable		92)Log * Variable		97)Log / Variable
+83)Log + BinaryOP		88)Log - BinaryOP		93)Log * BinaryOP		98)Log / BinaryOP
+84)Log + Polynomial		89)Log - Polynomial		94)Log * Polynomial		99)Log / Polynomial
+85)Log + Log			90)Log - Log			95)Log * Log			100)Log / Log
+
+--case 1: 
+> BinaryOP fx1 = new BinaryOP(BinaryOP.Op.PLUS, new Number(4), new Number(6))	
+		// fx1 = 4 + 6
+> fx1.value(378)
+		// 4 + 6 = 10
+10.0		
+		//returned as expected ☑
+		
+--case 2: 
+> BinaryOP fx2 = new BinaryOP(BinaryOP.Op.PLUS, new Number(4), new Variable())
+		// fx2 = 4 + x
+> fx2.value(10)
+		// 4 + 10 = 14
+14.0		
+		//returned as expected ☑
+
+--case 3:
+> BinaryOP fx3 = new BinaryOP(BinaryOP.Op.PLUS, new Number(4), new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Number(10)))
+		// fx3 = 4 + (x + 10)
+> fx3.value(100)
+		// 4 + (100 + 10) = 114
+114.0		
+		//returned as expected ☑
+
+--case 4:
+> BinaryOP fx4 = new BinaryOP(BinaryOP.Op.PLUS, new Number(4), new Polynomial(new Variable(), 3))
+		// fx4 = 4 + x^3
+> fx4.value(2)
+		// 4 + 2^3 = 12
+12.0		
+		//returned as expected ☑
+
+--case 5:
+> BinaryOP fx5 = new BinaryOP(BinaryOP.Op.PLUS, new Number(4), new Log(new Variable()))
+		// fx5 = 4 + ln(x)
+> fx5.value(Math.E)
+		// 4 + ln(e) = 4 + 1 = 5
+5.0		
+		//returned as expected ☑
+
+--case 6:
+> BinaryOP fx6 = new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Number(8))
+		// fx6 = 20 - 8
+> fx6.value(2222)
+		// 20 - 8 = 12
+12.0		
+		//returned as expected ☑
+
+--case 7:
+> BinaryOP fx7 = new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable())
+		// fx7 = 20 - x
+> fx7.value(1)
+		// 20 - 1 = 19
+19.0		
+		//returned as expected ☑
+
+--case 8:
+> BinaryOP fx8 = new BinaryOP(BinaryOP.Op.SUB, new Number(20), new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()))
+		// fx8 = 20 - (20 - x)
+> fx8.value(2)
+		// 20 - (20 - 2) = 20 - 18 = 2
+2.0		
+		//returned as expected ☑
+
+--case 9:
+> BinaryOP fx9 = new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Polynomial(new Variable(), 5))
+		// fx9 = 20 - x^5
+> fx9.value(2)
+		// 20 - 2^5 = 20 - 32 = -12
+-12.0		//returned as expected ☑
+
+--case 10:
+> BinaryOP fx10 = new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Log(new Variable()))
+		// fx10 = 20 - ln(x)
+> fx10.value(Math.E)
+		// 20 - ln(e) = 20 - 1 = 19
+19.0		//returned as expected ☑
+
+--case 11:
+> BinaryOP fx11 = new BinaryOP(BinaryOP.Op.MULT, new Number(5), new Number(3))
+		// fx11 = 5(3)
+> fx11.value(90)
+		// 5(3) = 15
+15.0		
+		//returned as expected ☑
+
+--case 12:
+> BinaryOP fx12 = new BinaryOP(BinaryOP.Op.MULT, new Number(5), new Variable())
+		// fx12 = 5(x)
+> fx12.value(-30)
+		// 5(-30) = -150
+-150.0		
+		//returned as expected ☑
+
+--case 13:
+> BinaryOP fx13 = new BinaryOP(BinaryOP.Op.MULT, new Number(5), new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()))
+		// fx13 = 5(20 - x)
+> fx13.value(1)
+		// 5(20 - 1) = 95
+95.0		
+		//returned as expected ☑
+
+--case 14:
+> BinaryOP fx14 = new BinaryOP(BinaryOP.Op.MULT, new Number(5), new Polynomial(new Variable(), 5))
+		// fx14 = 5(x^5)
+> fx14.value(2)
+		// 5(2^5) = 160
+160.0		
+		//returned as expected ☑
+
+--case 15:
+> BinaryOP fx15 = new BinaryOP(BinaryOP.Op.MULT, new Number(5), new Log(new Variable()))
+		// fx15 = 5(ln(x))
+> fx15.value(Math.E)
+		// 5(ln(e)) = 5(1) = 5
+5.0		
+		//returned as expected ☑
+
+--case 16:
+> BinaryOP fx16 = new BinaryOP(BinaryOP.Op.DIV, new Number(20), new Number(5))
+		// fx16 = 20 / 5
+> fx16.value(111)
+		// 20 / 5 = 4
+4.0		
+		//returned as expected ☑
+
+--case 17:
+> BinaryOP fx17 = new BinaryOP(BinaryOP.Op.DIV, new Number(20), new Variable())
+		// fx17 = 20 / x
+> fx17.value(10)
+		// 20/10 = 2
+2.0		
+		//returned as expected ☑
+
+--case 18:
+> BinaryOP fx18 = new BinaryOP(BinaryOP.Op.DIV, new Number(20), new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()))
+		// fx18 = 20 / (20 - x)
+> fx18.value(5)
+		// 20 / (20-5) = 20/15 
+1.3333333333333333 
+		//returned as expected ☑
+
+--case 19:
+> BinaryOP fx19 = new BinaryOP(BinaryOP.Op.DIV, new Number(20), new Polynomial(new Variable(), 2))
+		// fx19 = 20 / x^2
+> fx19.value(0.5)
+		// 20 / (0.5)^2 = 80
+80.0		
+		//returned as expected ☑
+
+--case 20:
+> BinaryOP fx20 = new BinaryOP(BinaryOP.Op.DIV, new Number(5), new Log(new Variable()))	
+		// fx20 = 5 / ln(x)
+> fx20.value(Math.E)
+		// 5 / ln(e) = 5 / 1 = 5
+5.0		
+		//returned as expected ☑
+
+--case 21:
+> BinaryOP fx21 = new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Number(6))
+		// fx21 = x + 6
+> fx21.value(10)
+		// 10 + 6 = 16
+16.0		
+		//returned as expected ☑
+
+--case 22:
+> BinaryOP fx22 = new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Variable())
+		// fx22 = x + x
+> fx22.value(10)
+		// 10 + 10 = 20
+20.0		
+		//returned as expected ☑
+
+--case 23:
+> BinaryOP fx23 = new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()))
+		// fx23 = x + (20 - x)
+> fx23.value(4)
+		// 4 + 20 - 4 = 20
+20.0		
+		//returned as expected ☑
+
+--case 24:
+> BinaryOP fx24 = new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Polynomial(new Variable(), 2))
+		// fx24 = x + x^2
+> fx24.value(2)
+		// 2 + 2^2 = 6
+6.0		
+		//returned as expected ☑
+
+--case 25:
+> BinaryOP fx25 = new BinaryOP(BinaryOP.Op.PLUS, new Variable(), new Log(new Variable()))
+		// fx25 = x + ln(x)
+> fx25.value(Math.E)
+		// e + ln(e) = e + 1 
+3.718281828459045 
+		//returned as expected ☑
+
+--case 26:
+> BinaryOP fx26 = new BinaryOP(BinaryOP.Op.SUB, new Variable(), new Number(6))
+		// fx26 = x - 6
+> fx26.value(30)
+		// 30 - 6 = 24
+24.0		
+		//returned as expected ☑
+
+--case 27:
+> BinaryOP fx27 = new BinaryOP(BinaryOP.Op.SUB, new Variable(), new Variable())
+		// fx27 = x - x
+> fx27.value(3)
+		// 3 - 3 = 0
+0.0		
+		//returned as expected ☑
+
+--case 28:
+> BinaryOP fx28 = new BinaryOP(BinaryOP.Op.SUB, new Variable(), new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()))
+		// fx28 = x - (20 - x)
+> fx28.value(17)
+		// 17 - 20 + 17 = 14
+14.0		
+		//returned as expected ☑
+
+--case 29:
+> BinaryOP fx29 = new BinaryOP(BinaryOP.Op.SUB, new Variable(), new Polynomial(new Variable(), 2))
+		// fx29 = x - x^2
+> fx29.value(2)
+		// 2 - 2^2 = -2
+-2.0		
+		//returned as expected ☑
+
+--case 30:
+> BinaryOP fx30 = new BinaryOP(BinaryOP.Op.SUB, new Variable(), new Log(new Variable()))
+		// fx30 = x - ln(x)
+> fx30.value(10)
+		// 10 + ln(10)
+7.697414907005954 
+		//returned as expected ☑
+
+--case 31:
+> BinaryOP fx31 = new BinaryOP(BinaryOP.Op.MULT, new Variable(), new Number(6))
+		// fx31 = x(6)
+> fx31.value(31)
+		// 32(6) = 186
+186.0		
+		//returned as expected ☑
+
+--case 32:
+> BinaryOP fx32 = new BinaryOP(BinaryOP.Op.MULT, new Variable(), new Variable())
+		// fx32 = x(x)
+> fx32.value(11)
+		// 11 (11) = 121
+121.0		
+		//returned as expected ☑
+
+--case 33:
+> BinaryOP fx33 = new BinaryOP(BinaryOP.Op.MULT, new Variable(), new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()))
+		// fx33 = x(20 - x)
+> fx33.value(1)
+		// 1 (20 - 1) = 19
+19.0		
+		//returned as expected ☑
+
+--case 34:
+> BinaryOP fx34 = new BinaryOP(BinaryOP.Op.MULT, new Variable(), new Polynomial(new Variable(), 2))
+		// fx34 = x(x^2)
+> fx34.value(5)
+		// 5(5^2) = 125
+125.0		
+		//returned as expected ☑
+
+--case 35:
+> BinaryOP fx35 = new BinaryOP(BinaryOP.Op.MULT, new Variable(), new Log(new Variable()))
+		// fx35 = x(ln(x))
+> fx35.value(1)
+		// 1 (ln(1)) = 0
+0.0		
+		//returned as expected ☑
+
+--case 36:
+> BinaryOP fx36 = new BinaryOP(BinaryOP.Op.DIV, new Variable(), new Number(6))
+		// fx36 = x / 6
+> fx36.value(1)
+		// 1 / 6
+0.16666666666666666	
+		//returned as expected ☑
+
+--case 37:
+> BinaryOP fx37 = new BinaryOP(BinaryOP.Op.DIV, new Variable(), new Variable())
+		// fx37 = x / x
+> fx37.value(43)
+		// 43 / 43 = 1
+1.0		
+		//returned as expected ☑
+
+--case 38:
+> BinaryOP fx38 = new BinaryOP(BinaryOP.Op.DIV, new Variable(), new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()))
+		// fx38 = x / (20 - x)
+> fx38.value(30)
+		// 30 / (20 - 30) = -3
+-3.0		
+		//returned as expected ☑
+
+--case 39:
+> BinaryOP fx39 = new BinaryOP(BinaryOP.Op.DIV, new Variable(), new Polynomial(new Variable(), 2))
+		// fx39 =  x / x^2
+> fx39.value(2)
+		// 2 / 4 = 0.5
+0.5		
+		//returned as expected ☑
+
+--case 40:
+> BinaryOP fx40 = new BinaryOP(BinaryOP.Op.DIV, new Variable(), new Log(new Variable()))
+		// fx40 = x / ln(x)
+> fx40.value(10)
+		// 10 / ln(10)
+4.3429448190325175	
+		//returned as expected ☑
+
+--case 41:
+> BinaryOP fx41 = new BinaryOP(BinaryOP.Op.PLUS, new BinaryOP(BinaryOP.Op.SUB, new Number(20), new Variable()), new Number(10))
+		// fx41 = (20 - x) + 10
+> fx41.value(2)
+		// 20 - 2 + 10 = 28
+28.0		
+		//returned as expected ☑
+
+--case 42:
+> BinaryOP fx42 = new BinaryOP(BinaryOP.Op.PLUS, fx1, new Variable())
+		// fx42 = (4 + 6) + x
+> fx42.value(2)
+		// 10 + 2 = 12
+12.0		
+		//returned as expected ☑
+
+--case 43:
+> BinaryOP fx43 = new BinaryOP(BinaryOP.Op.PLUS, fx1, fx42)
+		// fx43 = (4 + 6) + ((4 + 6) + x)
+> fx43.value(1)
+		// 10 + 10 + 1 = 21
+21.0		
+		//returned as expected ☑
+
+--case 44:
+> BinaryOP fx44 = new BinaryOP(BinaryOP.Op.PLUS, fx1, new Polynomial(new Variable(), 2))
+		// fx44 = (4 + 6) + x^2
+> fx44.value(3)
+		// 10 + 9 = 19
+19.0		//returned as expected ☑
+
+--case 45:
+> BinaryOP fx45 = new BinaryOP(BinaryOP.Op.PLUS, fx1, new Log(new Variable()))
+		// fx45 = (4 + 6) + ln(x)
+> fx45.value(Math.E)
+		// 10 + ln(e) = 11
+11.0		
+		//returned as expected ☑
+
+--case 46:
+> BinaryOP fx46 = new BinaryOP(BinaryOP.Op.SUB, fx1, new Number(5))
+		// fx46 = (4 + 6) - 5
+> fx46.value(1)
+		// 10 - 5 = 5
+5.0		
+		//returned as expected ☑
+
+--case 47:
+> BinaryOP fx47 = new BinaryOP(BinaryOP.Op.SUB, fx1, new Variable())
+		// fx47 = (4 + 6) - x
+> fx47.value(2)
+		// 10 - 2 = 8
+8.0		
+		//returned as expected ☑
+
+--case 48:
+> BinaryOP fx48 = new BinaryOP(BinaryOP.Op.SUB, fx1, fx47)
+		// fx48 = (4 + 6) - ((4 + 6) - x)
+> fx48.value(2)
+		// 10 - 10 + 2 = 2
+2.0		
+		//returned as expected ☑
+
+--case 49:
+> BinaryOP fx49 = new BinaryOP(BinaryOP.Op.SUB, fx1, new Polynomial(new Variable(), 2))
+		// fx49 = (4 + 6) - x^2
+> fx49.value(2)
+		// 10 - 2^2 = 6
+6.0		
+		//returned as expected ☑
+
+--case 50:
+> BinaryOP fx50 = new BinaryOP(BinaryOP.Op.SUB, fx1, new Log(new Variable()))
+		// fx50 = (4 + 6) - ln(x)
+> fx50.value(Math.E)
+		// 10 - ln(e) = 10 - 1 = 9
+9.0		
+		//returned as expected ☑
+
+--case 51:
+> BinaryOP fx51 = new BinaryOP(BinaryOP.Op.MULT, fx1, new Number(5))
+		// fx51 = (4 + 6)(5)
+> fx51.value(212)
+		// 10(50) = 50
+50.0		
+		//returned as expected ☑
+
+--case 52:
+> BinaryOP fx52 = new BinaryOP(BinaryOP.Op.MULT, fx1, new Variable())
+		// fx52 = (4 + 6)(x)
+> fx52.value(2)
+		// 10(2) = 20
+20.0		
+		//returned as expected ☑
+
+--case 53: 
+> BinaryOP fx53 = new BinaryOP(BinaryOP.Op.MULT, fx1, fx52)
+		// fx53 = (4 + 6)((4 + 6)(x))
+> fx53.value(2)
+		// 10*10*2 = 200
+200.0		
+		//returned as expected ☑
+
+--case 54:
+> BinaryOP fx54 = new BinaryOP(BinaryOP.Op.MULT, fx1, new Polynomial(new Variable(), 2))
+		// fx54 = (4 + 6)(x^2)
+> fx54.value(2)
+		// 10(2^2) = 40
+40.0		
+		//returned as expected ☑
+
+--case 55:
+> BinaryOP fx55 = new BinaryOP(BinaryOP.Op.MULT, fx1, new Log(new Variable()))
+		// fx55 = (4 + 6)(ln(x))
+> fx55.value(Math.E)
+		// 10*ln(e) = 10*1 = 10
+10.0		
+		//returned as expected ☑
+
+--case 56:
+> BinaryOP fx56 = new BinaryOP(BinaryOP.Op.DIV, fx1, new Number(5))
+		// fx56 = (4 + 6) / 5
+> fx56.value(2)
+		// 10 / 5 = 2
+2.0		
+		//returned as expected ☑
+
+--case 57:
+> BinaryOP fx57 = new BinaryOP(BinaryOP.Op.DIV, fx1, new Variable())
+		// fx57 = (4 + 6) / x
+> fx57.value(2)
+		// 10 / 2 = 5
+5.0		
+		//returned as expected ☑
+
+--case 58:
+> BinaryOP fx58 = new BinaryOP(BinaryOP.Op.DIV, fx1, fx57)
+		// fx58 = (4 + 6) / [(4 + 6) / x]
+> fx58.value(2)
+		// 10 / (10/2) = 10 / 5 = 2
+2.0		
+		//returned as expected ☑
+
+--case 59:
+> BinaryOP fx59 = new BinaryOP(BinaryOP.Op.DIV, fx1, new Polynomial(new Variable(), 2))
+		// fx59 = (4 + 6) / x^2
+> fx59.value(2)
+		// 10 / 4 = 2.5
+2.5		
+		//returned as expected ☑
+
+--case 60:
+> BinaryOP fx60 = new BinaryOP(BinaryOP.Op.DIV, fx1, new Log(new Variable()))
+		// fx60 = (4 + 6) / ln(x)
+> fx60.value(2)
+		// 10 / ln(2)
+14.426950408889635	
+		//returned as expected ☑
+
+--case 61:
+> BinaryOP fx61 = new BinaryOP(BinaryOP.Op.PLUS, new Polynomial(new Variable(), 2), new Number(5))
+		// fx61 = x^2 + 5
+> fx61.value(5)
+		// 25 + 5 = 30
+30.0		
+		//returned as expected ☑
+
+--case 62:
+> BinaryOP fx62 = new BinaryOP(BinaryOP.Op.PLUS, new Polynomial(new Variable(), 2), new Variable())
+		// fx62 = x^2 + x
+> fx62.value(2)
+		// 4 + 2 = 6
+6.0		
+		//returned as expected ☑
+
+--case 63:
+> BinaryOP fx63 = new BinaryOP(BinaryOP.Op.PLUS, new Polynomial(new Variable(), 2), fx1)
+		// fx63 = x^2 + (4 + 6)
+> fx63.value(3)
+		// 9 + 10 =19
+19.0		
+		//returned as expected ☑
+
+--case 64:
+> BinaryOP fx64 = new BinaryOP(BinaryOP.Op.PLUS, new Polynomial(new Variable(), 2), new Polynomial(new Variable(), 2))
+		// fx64 = x^2 + x^2
+> fx64.value(3)
+		// 9 + 9 = 18
+18.0		
+		//returned as expected ☑
+
+--case 65:
+> BinaryOP fx65 = new BinaryOP(BinaryOP.Op.PLUS, new Polynomial(new Variable(), 2), new Log(new Variable()))
+		// fx65 = x^2 + ln(x)
+> fx65.value(2)
+		// 4 + ln(2)
+4.693147180559945	
+		//returned as expected ☑ 
+
+--case 66:
+> BinaryOP fx66 = new BinaryOP(BinaryOP.Op.SUB, new Polynomial(new Variable(), 2), new Number(5))
+		// fx66 = x^2 - 5
+> fx66.value(3)
+		// 9 - 5 = 4
+4.0		
+		//returned as expected ☑
+
+--case 67:
+> BinaryOP fx67 = new BinaryOP(BinaryOP.Op.SUB, new Polynomial(new Variable(), 2), new Variable())
+		// fx67 = x^2 - x
+> fx67.value(10)
+		// 100 - 10 = 90
+90.0		
+		//returned as expected ☑
+
+--case 68:
+> BinaryOP fx68 = new BinaryOP(BinaryOP.Op.SUB, new Polynomial(new Variable(), 2), fx1)
+		// fx68 = x^2 - (4 + 6)
+> fx68.value(20)
+		// 400 - 10 = 390
+390.0		
+		//returned as expected ☑
+
+
+--case 69:
+> BinaryOP fx69 = new BinaryOP(BinaryOP.Op.SUB, new Polynomial(new Variable(), 2), new Polynomial(new Variable(), 2))
+		// fx69 = x^2 - x^2
+> fx69.value(12)
+		// 144 - 144 = 0
+0.0		
+		//returned as expected ☑
+
+--case 70:
+> BinaryOP fx70 = new BinaryOP(BinaryOP.Op.SUB, new Polynomial(new Variable(), 2), new Log(new Variable()))
+		// fx70 = x^2 - ln(x)
+> fx70.value(10)
+		// 100 - ln(10)
+97.69741490700595	
+		//returned as expected ☑
+
+--case 71:
+> BinaryOP fx71 = new BinaryOP(BinaryOP.Op.MULT, new Polynomial(new Variable(), 2), new Number(5))
+		// fx71 = x^2 * 5
+> fx71.value(2)
+		// 4 * 5 = 20
+20.0		
+		//returned as expected ☑
+
+--case 72:
+> BinaryOP fx72 = new BinaryOP(BinaryOP.Op.MULT, new Polynomial(new Variable(), 2), new Variable())
+		// fx72 = x^2 * x
+> fx72.value(10)
+		// 100 * 10 = 1000
+1000.0		
+		//returned as expected ☑
+
+--case 73:
+> BinaryOP fx73 = new BinaryOP(BinaryOP.Op.MULT, new Polynomial(new Variable(), 2), fx1)
+		// fx73 = x^2 * (4 + 6)
+> fx73.value(2)
+		// 4 * 10 = 40
+40.0		
+		//returned as expected ☑
+
+--case 74:
+> BinaryOP fx74 = new BinaryOP(BinaryOP.Op.MULT, new Polynomial(new Variable(), 2), new Polynomial(new Variable(), 2))
+		// fx74 = x^2 * x^2
+> fx74.value(3)
+		// 9 * 9 = 81
+81.0		
+		//returned as expected ☑
+
+--case 75:
+> BinaryOP fx75 = new BinaryOP(BinaryOP.Op.MULT, new Polynomial(new Variable(), 2), new Log(new Variable()))
+		// fx75 = x^2 * ln(x)
+> fx75.value(Math.E)
+		// e^2 * ln(2) = e^2
+7.3890560989306495	
+		//returned as expected ☑
+
+--case 76:
+> BinaryOP fx76 = new BinaryOP(BinaryOP.Op.DIV, new Polynomial(new Variable(), 2), new Number(5))
+		// fx76 = x^2 / 5
+> fx76.value(2)
+		// 4 / 5 = 0.8
+0.8		
+		//returned as expected ☑
+
+--case 77:
+> BinaryOP fx77 = new BinaryOP(BinaryOP.Op.DIV, new Polynomial(new Variable(), 2), new Variable())
+		// fx77 = x^2 / x
+> fx77.value(5)
+		// 25 / 5 = 5
+5.0		
+		//returned as expected ☑
+
+--case 78:
+> BinaryOP fx78 = new BinaryOP(BinaryOP.Op.DIV, new Polynomial(new Variable(), 2), fx1)
+		// fx78 = x^2 / (4 + 6)
+> fx78.value(2)
+		// 4 / 10 = 0.4
+0.4		
+		//returned as expected ☑
+
+--case 79:
+> BinaryOP fx79 = new BinaryOP(BinaryOP.Op.DIV, new Polynomial(new Variable(), 2), new Polynomial(new Variable(), 2))
+		// fx79 = x^2 / x^2
+> fx79.value(4)
+		// 16 / 16 = 1
+1.0		
+		//returned as expected ☑
+
+--case 80:
+> BinaryOP fx80 = new BinaryOP(BinaryOP.Op.DIV, new Polynomial(new Variable(), 2), new Log(new Variable()))
+		// fx80 = x^2 / ln(x)
+> fx80.value(10)
+		// 100 / ln(10)
+43.42944819032518	
+		//returned as expected ☑
+
+--case 81:
+> BinaryOP fx81 = new BinaryOP(BinaryOP.Op.PLUS, new Log(new Variable()), new Number(5))
+		// fx81 = ln(x) + 5
+> fx81.value(Math.E)
+		// ln(e) + 5 = 1 + 5 = 6
+6.0		
+		//returned as expected ☑
+
+--case 82:
+> BinaryOP fx82 = new BinaryOP(BinaryOP.Op.PLUS, new Log(new Variable()), new Variable())
+		// fx82 = ln(x) + x
+> fx82.value(Math.E)
+		// ln(e) + e = 1 + e
+3.718281828459045	
+		//returned as expected ☑
+
+--case 83:
+> BinaryOP fx83 = new BinaryOP(BinaryOP.Op.PLUS, new Log(new Variable()), fx1)
+		// fx83 = ln(x) + (4 + 6)
+> fx83.value(Math.E)
+		// ln(e) + 10 = 1 + 10 = 11
+11.0		
+		//returned as expected ☑
+
+--case 84:
+> BinaryOP fx84 = new BinaryOP(BinaryOP.Op.PLUS, new Log(new Variable()), new Polynomial(new Variable(), 2))
+		// fx84 = ln(x) + x^2
+> fx84.value(Math.E)
+		// ln(e) + e^2 = 1 + e^2
+8.389056098930649	
+		//returned as expected ☑
+
+--case 85:
+> BinaryOP fx85 = new BinaryOP(BinaryOP.Op.PLUS, new Log(new Variable()), new Log(new Variable()))
+		// fx85 = ln(x) + ln(x)
+> fx85.value(Math.E)
+		// ln(e) + ln(e) = 1 + 1 = 2c
+2.0		
+		//returned as expected ☑
+
+--case 86:
+> BinaryOP fx86 = new BinaryOP(BinaryOP.Op.SUB, new Log(new Variable()), new Number(5))
+		// fx86 = ln(x) - 5
+> fx86.value(Math.E)
+		// ln(e) - 5 = 1 - 5 = -4
+-4.0		
+		//returned as expected ☑
+
+--case 87:
+> BinaryOP fx87 = new BinaryOP(BinaryOP.Op.SUB, new Log(new Variable()), new Variable())
+		// fx87 = ln(x) - x
+> fx87.value(Math.E)
+		// ln(e) - e = 1 - e
+-1.718281828459045	
+		//returned as expected ☑
+
+--case 88:
+> BinaryOP fx88 = new BinaryOP(BinaryOP.Op.SUB, new Log(new Variable()), fx1)
+		// fx88 = ln(x) - (4 + 6)
+> fx88.value(Math.E)
+		// ln(e) - 10 = 1 - 10 = -9
+-9.0		
+		//returned as expected ☑
+
+--case 89:
+> BinaryOP fx89 = new BinaryOP(BinaryOP.Op.SUB, new Log(new Variable()), new Polynomial(new Variable(), 2))
+		// fx89 = ln(x) - x^2
+> fx89.value(Math.E)
+		// ln(e) - e^2 = 1 - e^2
+-6.3890560989306495	
+		//returned as expected ☑
+
+--case 90:
+> BinaryOP fx90 = new BinaryOP(BinaryOP.Op.SUB, new Log(new Variable()), new Log(new Variable()))
+		// fx90 = ln(x) - ln(x)
+> fx90.value(Math.E)
+		// ln(e) - ln(e) = 1 - 1 = 0
+0.0		
+		//returned as expected ☑
+
+--case 91:
+> BinaryOP fx91 = new BinaryOP(BinaryOP.Op.MULT, new Log(new Variable()), new Number(5))
+		// fx91 = ln(x) * 5
+> fx91.value(Math.E)
+		// ln(e) * 5 = 1*5 = 5
+5.0		
+		//returned as expected ☑
+
+--case 92:
+> BinaryOP fx92 = new BinaryOP(BinaryOP.Op.MULT, new Log(new Variable()), new Variable())
+		// fx92 = ln(x) * x
+> fx92.value(Math.E)
+		// ln(e) * e = 1 * e = e
+2.718281828459045	
+		//returned as expected ☑
+
+--case 93:
+> BinaryOP fx93 = new BinaryOP(BinaryOP.Op.MULT, new Log(new Variable()), fx1)
+		// fx93 = ln(x) * (4 + 6)
+> fx93.value(Math.E)
+		// ln(e) * 10 = 1*10 = 10
+10.0		
+		//returned as expected ☑
+
+--case 94:
+> BinaryOP fx94 = new BinaryOP(BinaryOP.Op.MULT, new Log(new Variable()), new Polynomial(new Variable(), 2))
+		// fx94 = ln(x) * x^2
+> fx94.value(Math.E)
+		// ln(e) * e^2 = 1*e^2 = e^2
+7.3890560989306495	
+		//returned as expected ☑
+
+--case 95:
+> BinaryOP fx95 = new BinaryOP(BinaryOP.Op.MULT, new Log(new Variable()), new Log(new Variable()))
+		// fx95 = ln(x) * ln(x)
+> fx95.value(Math.E)
+		// ln(e) * ln(e) = 1*1 = 1
+1.0		
+		//returned as expected ☑
+
+--case 96:
+> BinaryOP fx96 = new BinaryOP(BinaryOP.Op.DIV, new Log(new Variable()), new Number(5))
+		// fx96 = ln(x) / 5
+> fx96.value(Math.E)
+		// ln(e)/ 5 = 1/5 
+0.2		
+		//returned as expected ☑
+
+--case 97:
+> BinaryOP fx97 = new BinaryOP(BinaryOP.Op.DIV, new Log(new Variable()), new Variable())
+		// fx97 = ln(x) / x
+> fx97.value(Math.E)
+		// lne / e = 1 / e
+0.36787944117144233	
+		//returned as expected ☑
+
+--case 98:
+> BinaryOP fx98 = new BinaryOP(BinaryOP.Op.DIV, new Log(new Variable()), fx1)
+		// fx98 = ln(x) / (4 + 6)
+> fx98.value(Math.E)
+		// lne / 10 = 1/10
+0.1		
+		//returned as expected ☑
+
+--case 99:
+> BinaryOP fx99 = new BinaryOP(BinaryOP.Op.DIV, new Log(new Variable()), new Polynomial(new Variable(), 2))
+		// fx99 = ln(x) / x^2
+> fx99.value(Math.E)
+		// lne / e^2 = 1/e^2
+0.1353352832366127	
+		//returned as expected ☑
+
+--case 100:
+> BinaryOP fx100 = new BinaryOP(BinaryOP.Op.DIV, new Log(new Variable()), new Log(new Variable()))
+		// fx100 = ln(x) / ln(x)
+> fx100.value(Math.E)
+		// lne / lne = 1
+1.0		
+		//returned as expected ☑
+> fx100.value()
+		//testing for no input (this method has a Variable)
+java.lang.UnsupportedOperationException: Input was expected but none was provided
+	at Calculations.valueHelper(Calculations.java:103)
+	at Calculations.value(Calculations.java:54)
+	at sun.reflect.GeneratedMethodAccessor2.invoke(Unknown Source)
+		//returned as expected ☑
+> fx1.value()
+		//testing for no input (this method doesn't have any Variables)
+10.0
+		//returned as expected ☑
+> fx100.value(1,2,3,4)
+		//testing for more than one input (An Exception should be thrown)
+java.lang.IllegalArgumentException: Cannot have more than one input
+	at Calculations.value(Calculations.java:79)
+		//returned as expected ☑
+
+//testing method derivative for all the functions above
+> fx1.derivative()
+		// fx1 = 4 + 6 --> f'x1 = 0
+0.0 + 0.0
+		//returned as expected ☑
+> fx2.derivative()
+		// fx2 = 4 + x -- f'x2 = 1
+0.0 + 1.0
+		//returned as expected ☑
+> fx3.derivative()
+		// fx3 = 4 + (x + 10) --> f'x3 = 1
+0.0 + (1.0 + 0.0)
+		//returned as expected ☑
+> fx4.derivative()
+		// fx4 = 4 + x^3 --> f'x4 = 3x^2
+0.0 + (3.0 * x^2.0)
+		//returned as expected ☑
+> fx5.derivative()
+		// fx5 = 4 + ln(x) --> f'x5 = 1/x
+0.0 + (1.0 / x)
+		//returned as expected ☑
+> fx6.derivative()
+		// fx6 = 20 - 8 --> f'x6 = 0
+0.0 - 0.0
+		//returned as expected ☑
+> fx7.derivative()
+		// fx7 = 20 - x --> f'x7 = -1
+0.0 - 1.0
+		//returned as expected ☑
+> fx8.derivative()
+		// fx8 = 20 - (20 - x) --> f'x8 = 1
+0.0 - (0.0 - 1.0)
+		//returned as expected ☑
+> fx9.derivative()
+		// fx9 = 20 - x^5 --> f'x9 = -5x^4
+0.0 - (5.0 * x^4.0)
+		//returned as expected ☑
+> fx10.derivative()
+		// fx10 = 20 - ln(x) --> f'x9 = -1/x
+0.0 - (1.0 / x)
+		//returned as expected ☑
+> fx11.derivative()
+		// fx11 = 5(3) --> f'x11 = 0
+(0.0 * 3.0) + (5.0 * 0.0)
+		//returned as expected ☑
+> fx12.derivative()
+		// fx12 = 5(x) --> f'x12 = 5
+(0.0 * x) + (5.0 * 1.0)
+		//returned as expected ☑
+> fx13.derivative()
+		// fx13 = 5(20 - x) --> f'x13 = -5
+(0.0 * (20.0 - x)) + (5.0 * (0.0 - 1.0))
+		//returned as expected ☑
+> fx14.derivative()
+		// fx14 = 5(x^5) --> f'x14 = 25x^4
+(0.0 * x^5.0) + (5.0 * (5.0 * x^4.0))
+		//returned as expected ☑
+> fx15.derivative()
+		// fx15 = 5(ln(x)) --> f'x15 = 5/x
+(0.0 * Exp[x]) + (5.0 * (1.0 / x))
+		//returned as expected ☑
+> fx16.derivative()
+		// fx16 = 20 / 5 --> f'x16 = 0
+((0.0 * 5.0) - (20.0 * 0.0)) / 5.0^2.0
+		//returned as expected ☑
+> fx17.derivative()
+		// fx17 = 20 / x --> f'x17 = -20/x^2
+((0.0 * x) - (20.0 * 1.0)) / x^2.0
+		//returned as expected ☑
+> fx18.derivative()
+		// fx18 = 20 / (20 - x) --> f'x18 = 20/[(20-x)^2]
+((0.0 * (20.0 - x)) - (20.0 * (0.0 - 1.0))) / (20.0 - x)^2.0
+		//returned as expected ☑
+> fx19.derivative()
+		// fx19 = 20 / x^2 --> f'x19 = [-40x]/[x^2]^2
+((0.0 * x^2.0) - (20.0 * (2.0 * x^1.0))) / x^2.0^2.0
+		//returned as expected ☑
+> fx20.derivative()
+		// fx20 = 5 / ln(x) --> f'x20 = [-5/x]/[lnx]^2
+((0.0 * Exp[x]) - (5.0 * (1.0 / x))) / Exp[x]^2.0
+		//returned as expected ☑
+> fx21.derivative()
+		// fx21 = x + 6 --> f'x21 = 1
+1.0 + 0.0
+		//returned as expected ☑
+> fx22.derivative()
+		// fx22 = x + x --> f'x22 = 1 + 1
+1.0 + 1.0
+		//returned as expected ☑
+> fx23.derivative()
+		// fx23 = x + (20 - x) --> f'x23 = 1 - 1 
+1.0 + (0.0 - 1.0)
+		//returned as expected ☑
+> fx24.derivative()
+		// fx24 = x + x^2 --> f'x24 = 1 + 2x
+1.0 + (2.0 * x^1.0)
+		//returned as expected ☑
+> fx25.derivative()
+		// fx25 = x + ln(x) --> f'x25 = 1 + 1/x
+1.0 + (1.0 / x)
+		//returned as expected ☑
+> fx26.derivative()
+		// fx26 = x - 6 --> f'x26 = 1
+1.0 - 0.0
+		//returned as expected ☑
+> fx27.derivative()
+		// fx27 = x - x --> f'x27 = 1 - 1
+1.0 - 1.0
+		//returned as expected ☑
+> fx28.derivative()
+		// fx28 = x - (20 - x) --> f'x28 = 1 - (-1)
+1.0 - (0.0 - 1.0)
+		//returned as expected ☑
+> fx29.derivative()
+		// fx29 = x - x^2 --> f'x29 = 1 - 2x
+1.0 - (2.0 * x^1.0)
+		//returned as expected ☑
+> fx30.derivative()
+		// fx30 = x - ln(x) --> f'x30 = 1 - 1/x
+1.0 - (1.0 / x)
+		//returned as expected ☑
+> fx31.derivative()
+(1.0 * 6.0) + (x * 0.0)
+		// fx31 = x(6) --> f'x31 = 6
+		//returned as expected ☑
+> fx32.derivative()
+		// fx32 = x(x) --> f'x32 = x + x 
+(1.0 * x) + (x * 1.0)
+		//returned as expected ☑
+> fx33.derivative()
+		// fx33 = x(20 - x) --> f'x32 = 20 - 2x
+(1.0 * (20.0 - x)) + (x * (0.0 - 1.0))
+		//returned as expected ☑
+> fx34.derivative()
+		// fx34 = x(x^2) --> f'x34 = 3x^2
+(1.0 * x^2.0) + (x * (2.0 * x^1.0))
+		//returned as expected ☑
+> fx35.derivative()
+		// fx35 = x(ln(x)) --> f'x35 = x*[1/x] + lnx
+(1.0 * Exp[x]) + (x * (1.0 / x))
+		//returned as expected ☑
+> fx36.derivative()
+		// fx36 = x / 6 --> f'36x = 1/6
+((1.0 * 6.0) - (x * 0.0)) / 6.0^2.0
+		//returned as expected ☑
+> fx37.derivative()
+		// fx37 = x / x --> f'x37 = 0
+((1.0 * x) - (x * 1.0)) / x^2.0
+		//returned as expected ☑
+> fx38.derivative()
+		// fx38 = x / (20 - x) --> f'x38 = [(20-x) - x(-1)]/[20-x]^2
+((1.0 * (20.0 - x)) - (x * (0.0 - 1.0))) / (20.0 - x)^2.0
+		//returned as expected ☑
+> fx39.derivative()
+		// fx39 =  x / x^2 --> f'x39 = -1/x^2
+((1.0 * x^2.0) - (x * (2.0 * x^1.0))) / x^2.0^2.0
+		//returned as expected ☑
+> fx40.derivative()
+		// fx40 = x / ln(x) --> f'x40 = [(lnx) - (x/x)]/[lnx]^2
+((1.0 * Exp[x]) - (x * (1.0 / x))) / Exp[x]^2.0
+		//returned as expected ☑
+> fx41.derivative()
+		// fx41 = (20 - x) + 10 --> f'x41 = -1
+(0.0 - 1.0) + 0.0
+		//returned as expected ☑
+> fx42.derivative()
+		// fx42 = (4 + 6) + x --> f'x42 = 1
+(0.0 + 0.0) + 1.0
+		//returned as expected ☑
+> fx43.derivative()
+		// fx43 = (4 + 6) + ((4 + 6) + x) --> f'x43 = 1
+(0.0 + 0.0) + ((0.0 + 0.0) + 1.0)
+		//returned as expected ☑
+> fx44.derivative()
+		// fx44 = (4 + 6) + x^2 --> f'x44 = 2x
+(0.0 + 0.0) + (2.0 * x^1.0)
+		//returned as expected ☑
+> fx45.derivative()
+		// fx45 = (4 + 6) + ln(x) --> f'x45 = 1/x
+(0.0 + 0.0) + (1.0 / x)
+		//returned as expected ☑
+> fx46.derivative()
+		// fx46 = (4 + 6) - 5 --> f'x46 = 0
+(0.0 + 0.0) - 0.0
+		//returned as expected ☑
+> fx47.derivative()
+		// fx47 = (4 + 6) - x --> f'x47 = -1
+(0.0 + 0.0) - 1.0
+		//returned as expected ☑
+> fx48.derivative()
+		// fx48 = (4 + 6) - ((4 + 6) - x) --> f'x48 = -(-1)
+(0.0 + 0.0) - ((0.0 + 0.0) - 1.0)
+		//returned as expected ☑
+> fx49.derivative()
+		// fx49 = (4 + 6) - x^2 --> f'x49 = -2x
+(0.0 + 0.0) - (2.0 * x^1.0)
+		//returned as expected ☑
+> fx50.derivative()
+		// fx50 = (4 + 6) - ln(x) --> f'x50 = -1/x
+(0.0 + 0.0) - (1.0 / x)
+		//returned as expected ☑
+> fx51.derivative()
+		// fx51 = (4 + 6)(5) --> f'x51 = 0
+((0.0 + 0.0) * 5.0) + ((4.0 + 6.0) * 0.0)
+		//returned as expected ☑
+> fx52.derivative()
+		// fx52 = (4 + 6)(x) --> f'x52 = 4 + 6
+((0.0 + 0.0) * x) + ((4.0 + 6.0) * 1.0)
+		//returned as expected ☑
+> fx53.derivative()
+		// fx53 = (4 + 6)((4 + 6)(x)) --> f'x53 = (4+6)(4+6)
+((0.0 + 0.0) * ((4.0 + 6.0) * x)) + ((4.0 + 6.0) * (((0.0 + 0.0) * x) + ((4.0 + 6.0) * 1.0)))
+		//returned as expected ☑
+> fx54.derivative()
+		// fx54 = (4 + 6)(x^2) --> f'x54 = 20x
+((0.0 + 0.0) * x^2.0) + ((4.0 + 6.0) * (2.0 * x^1.0))
+		//returned as expected ☑
+> fx55.derivative()
+		// fx55 = (4 + 6)(ln(x)) --> f'x55 = 10/x
+((0.0 + 0.0) * Exp[x]) + ((4.0 + 6.0) * (1.0 / x))
+		//returned as expected ☑
+> fx56.derivative()
+		// fx56 = (4 + 6) / 5 --> f'x56 = 0
+(((0.0 + 0.0) * 5.0) - ((4.0 + 6.0) * 0.0)) / 5.0^2.0
+		//returned as expected ☑
+> fx57.derivative()
+		// fx57 = (4 + 6) / x --> f'x57 = -1/x^2
+(((0.0 + 0.0) * x) - ((4.0 + 6.0) * 1.0)) / x^2.0
+		//returned as expected ☑
+> fx58.derivative()
+		// fx58 = (4 + 6) / [(4 + 6) / x] --> f'x58 = 1
+(((0.0 + 0.0) * ((4.0 + 6.0) / x)) - ((4.0 + 6.0) * ((((0.0 + 0.0) * x) - ((4.0 + 6.0) * 1.0)) / x^2.0))) / ((4.0 + 6.0) / x)^2.0
+		//returned as expected ☑
+> fx59.derivative()
+		// fx59 = (4 + 6) / x^2 --> f'x59 = [-20x]/[(x^2)]^2
+(((0.0 + 0.0) * x^2.0) - ((4.0 + 6.0) * (2.0 * x^1.0))) / x^2.0^2.0
+		//returned as expected ☑
+> fx60.derivative()
+		// fx60 = (4 + 6) / ln(x) --> f'x60 = [-10/x] / [lnx]^2
+(((0.0 + 0.0) * Exp[x]) - ((4.0 + 6.0) * (1.0 / x))) / Exp[x]^2.0
+		//returned as expected ☑
+> fx61.derivative()
+		// fx61 = x^2 + 5 --> f'x61 = 2x
+(2.0 * x^1.0) + 0.0
+		//returned as expected ☑
+> fx62.derivative()
+		// fx62 = x^2 + x --> f'x62 = 2x + 1
+(2.0 * x^1.0) + 1.0
+		//returned as expected ☑
+> fx63.derivative()
+		// fx63 = x^2 + (4 + 6) --> f'x63 = 2x 
+(2.0 * x^1.0) + (0.0 + 0.0)
+		//returned as expected ☑
+> fx64.derivative()
+		// fx64 = x^2 + x^2 --> f'x64 = 2x + 2x
+(2.0 * x^1.0) + (2.0 * x^1.0)
+		//returned as expected ☑
+> fx65.derivative()
+		// fx65 = x^2 + ln(x) --> f'x65 = 2x + 1/x
+(2.0 * x^1.0) + (1.0 / x)
+		//returned as expected ☑
+> fx66.derivative()
+		// fx66 = x^2 - 5 --> f'x66 = 2x 
+(2.0 * x^1.0) - 0.0
+		//returned as expected ☑
+> fx67.derivative()
+		// fx67 = x^2 - x --> f'x67 = 2x - 1
+(2.0 * x^1.0) - 1.0
+		//returned as expected ☑
+> fx68.derivative()
+		// fx68 = x^2 - (4 + 6) --> f'x68 = 2x 
+(2.0 * x^1.0) - (0.0 + 0.0)
+		//returned as expected ☑
+> fx69.derivative()
+		// fx69 = x^2 - x^2 --> f'x69 = 2x - 2x
+(2.0 * x^1.0) - (2.0 * x^1.0)
+		//returned as expected ☑
+> fx70.derivative()
+		// fx70 = x^2 - ln(x) --> f'x70 = 2x - 1/x
+(2.0 * x^1.0) - (1.0 / x)
+		//returned as expected ☑
+> fx71.derivative()
+		// fx71 = x^2 * 5 --> f'x71 = 10x
+((2.0 * x^1.0) * 5.0) + (x^2.0 * 0.0)
+		//returned as expected ☑
+> fx72.derivative()
+		// fx72 = x^2 * x --> f'x72 = 3x^2
+((2.0 * x^1.0) * x) + (x^2.0 * 1.0)
+		//returned as expected ☑
+> fx73.derivative()
+		// fx73 = x^2 * (4 + 6) --> f'x73 = 20x
+((2.0 * x^1.0) * (4.0 + 6.0)) + (x^2.0 * (0.0 + 0.0))
+		//returned as expected ☑
+> fx74.derivative()
+		// fx74 = x^2 * x^2 --> f'x74 = 4x^3
+((2.0 * x^1.0) * x^2.0) + (x^2.0 * (2.0 * x^1.0))
+		//returned as expected ☑
+> fx75.derivative()
+		// fx75 = x^2 * ln(x) --> f'x75 = 2xlnx + (1/x)x^2
+((2.0 * x^1.0) * Exp[x]) + (x^2.0 * (1.0 / x))
+		//returned as expected ☑
+> fx76.derivative()
+		// fx76 = x^2 / 5 --> f'x76 = (2/5)x
+(((2.0 * x^1.0) * 5.0) - (x^2.0 * 0.0)) / 5.0^2.0
+		//returned as expected ☑
+> fx77.derivative()
+		// fx77 = x^2 / x --> f'x77 = 1
+(((2.0 * x^1.0) * x) - (x^2.0 * 1.0)) / x^2.0
+		//returned as expected ☑
+> fx78.derivative()
+		// fx78 = x^2 / (4 + 6) --> f'x78 = 2x(1/10)
+(((2.0 * x^1.0) * (4.0 + 6.0)) - (x^2.0 * (0.0 + 0.0))) / (4.0 + 6.0)^2.0
+		//returned as expected ☑
+> fx79.derivative()
+		// fx79 = x^2 / x^2 --> f'x79 = 0
+(((2.0 * x^1.0) * x^2.0) - (x^2.0 * (2.0 * x^1.0))) / x^2.0^2.0
+		//returned as expected ☑
+> fx80.derivative()
+		// fx80 = x^2 / ln(x) --> f'x80 = [2xlnx - x^2/x] / [lnx]^2 
+(((2.0 * x^1.0) * Exp[x]) - (x^2.0 * (1.0 / x))) / Exp[x]^2.0
+		//returned as expected ☑
+> fx81.derivative()
+		// fx81 = ln(x) + 5 --> f'x81 = 1/x
+(1.0 / x) + 0.0
+		//returned as expected ☑
+> fx82.derivative()
+		// fx82 = ln(x) + x --> f'x82 = 1/x + 1
+(1.0 / x) + 1.0
+		//returned as expected ☑
+> fx83.derivative()
+		// fx83 = ln(x) + (4 + 6) --> f'x83 = 1/x
+(1.0 / x) + (0.0 + 0.0)
+		//returned as expected ☑
+> fx84.derivative()
+		// fx84 = ln(x) + x^2 --> f'x84 = 1/x + 2x
+(1.0 / x) + (2.0 * x^1.0)
+		//returned as expected ☑
+> fx85.derivative()
+		// fx85 = ln(x) + ln(x) --> f'x85 = 1/x + 1/x
+(1.0 / x) + (1.0 / x)
+		//returned as expected ☑
+> fx86.derivative()
+		// fx86 = ln(x) - 5 --> f'x86 = 1/x
+(1.0 / x) - 0.0
+		//returned as expected ☑
+> fx87.derivative()
+		// fx87 = ln(x) - x --> f'x87 = 1/x - 1
+(1.0 / x) - 1.0
+		//returned as expected ☑
+> fx88.derivative()
+		// fx88 = ln(x) - (4 + 6) --> f'x88 = 1/x 
+(1.0 / x) - (0.0 + 0.0)
+		//returned as expected ☑
+> fx89.derivative()
+		// fx89 = ln(x) - x^2 --> f'x89 = 1/x - 2x
+(1.0 / x) - (2.0 * x^1.0)
+		//returned as expected ☑
+> fx90.derivative()
+		// fx90 = ln(x) - ln(x) --> f'x90 = 1/x - 1/x
+(1.0 / x) - (1.0 / x)
+		//returned as expected ☑
+> fx91.derivative()
+		// fx91 = ln(x) * 5 --> f'x91 = 5/x
+((1.0 / x) * 5.0) + (Exp[x] * 0.0)
+		//returned as expected ☑
+> fx92.derivative()
+		// fx92 = ln(x) * x --> f'x92 = lnx + x/x
+((1.0 / x) * x) + (Exp[x] * 1.0)
+		//returned as expected ☑
+> fx93.derivative()
+		// fx93 = ln(x) * (4 + 6) --> f'x93 = 10/x
+((1.0 / x) * (4.0 + 6.0)) + (Exp[x] * (0.0 + 0.0))
+		//returned as expected ☑
+> fx94.derivative()
+		// fx94 = ln(x) * x^2 --> f'x94 = 2xlnx + x^2/x
+((1.0 / x) * x^2.0) + (Exp[x] * (2.0 * x^1.0))
+		//returned as expected ☑
+> fx95.derivative()
+		// fx95 = ln(x) * ln(x) --> f'x95 = lnx/x + lnx/x
+((1.0 / x) * Exp[x]) + (Exp[x] * (1.0 / x))
+		//returned as expected ☑
+> fx96.derivative()
+		// fx96 = ln(x) / 5 --> f'x96 = 1/5x
+(((1.0 / x) * 5.0) - (Exp[x] * 0.0)) / 5.0^2.0
+		//returned as expected ☑
+> fx97.derivative()
+		// fx97 = ln(x) / x --> f'x97 = [x/x - lnx] / [x]^2 
+(((1.0 / x) * x) - (Exp[x] * 1.0)) / x^2.0
+		//returned as expected ☑
+> fx98.derivative()
+		// fx98 = ln(x) / (4 + 6) --> f'x98 = 1/10x
+(((1.0 / x) * (4.0 + 6.0)) - (Exp[x] * (0.0 + 0.0))) / (4.0 + 6.0)^2.0
+		//returned as expected ☑
+> fx99.derivative()
+		// fx99 = ln(x) / x^2 --> f'x99 = [(x^2 / x) - 2xlnx] / [x^2]^2
+(((1.0 / x) * x^2.0) - (Exp[x] * (2.0 * x^1.0))) / x^2.0^2.0
+		//returned as expected ☑
+> fx100.derivative()
+		// fx100 = ln(x) / ln(x) --> f'x100 = 0
+(((1.0 / x) * Exp[x]) - (Exp[x] * (1.0 / x))) / Exp[x]^2.0
+		//returned as expected ☑
